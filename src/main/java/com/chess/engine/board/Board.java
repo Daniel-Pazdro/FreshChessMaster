@@ -2,13 +2,16 @@ package com.chess.engine.board;
 
 import com.chess.engine.Colour;
 import com.chess.engine.Pair;
+import com.chess.engine.player.WhitePlayer;
+import com.chess.engine.player.BlackPlayer;
+import com.chess.engine.player.Player;
 import com.chess.engine.moves.Move;
 import com.chess.engine.pieces.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.chess.engine.pieces.Piece;
 
 import static com.chess.engine.Colour.BLACK;
@@ -21,6 +24,9 @@ public class Board {
     private final ArrayList<Piece> blackPieces;
 
 
+    public final WhitePlayer whitePlayer;
+    public final BlackPlayer blackPlayer;
+    public final Player current;
 
     private Board (Builder builder){
         gameBoard = createGameBoard(builder);
@@ -29,6 +35,9 @@ public class Board {
 
         final ArrayList<Move> whiteLegalMoves = calculateValidMoves(this.whitePieces);
         final ArrayList<Move> blackLegalMoves = calculateValidMoves(this.blackPieces);
+        this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
+        this.blackPlayer = new BlackPlayer(this, whiteLegalMoves, blackLegalMoves);
+        this.current = builder.whoIsPlayingNow.choosePlayer(whitePlayer,blackPlayer);
 
     }
 
@@ -114,7 +123,7 @@ public class Board {
     }
 
 
-    int WhoIsPlayingNow;
+//    Colour whoIsPlayingNow;
     public Tile getTile(Pair candidateForMove) {
         for(int i = 0; i <numberOfTilesInColumn; i++){
             if(gameBoard.get(candidateForMove.getX()).get(i).coordinate.getY() == candidateForMove.getY()){
@@ -123,9 +132,14 @@ public class Board {
         }
         return null;
     }
+
+    public Collection<Move> getAllLegalMoves() {
+        return Stream.concat(this.whitePlayer.getLegalMoves().stream(), this.blackPlayer.getLegalMoves().stream()).collect(Collectors.toList());
+    }
+
     public static class Builder {
         Map<Pair, Piece> boardConfiguration;
-        Colour WhoIsPlayingNow;
+        public Colour whoIsPlayingNow;
         public Builder(){
             this.boardConfiguration = new HashMap<>();
 
@@ -137,7 +151,7 @@ public class Board {
         }
 
         public Builder setPlayer(Colour WhoIsPlayingNow){
-            this.WhoIsPlayingNow = WhoIsPlayingNow;
+            this.whoIsPlayingNow = WhoIsPlayingNow;
             return this;
         }
 
@@ -158,6 +172,13 @@ public class Board {
             printedBoard.append('\n');
         }
         return printedBoard.toString();
+    }
+
+    public ArrayList<Piece> getBlackPieces(){
+        return blackPieces;
+    }
+    public ArrayList<Piece> getWhitePieces(){
+        return whitePieces;
     }
 }
 

@@ -15,10 +15,16 @@ import static com.chess.engine.board.BoardFeature.numberOfTilesInColumn;
 public class Bishop extends Piece{
 
     public Bishop(int positionX, int positionY, Colour colour) {
-        super(positionX, positionY, colour);
+        super(typeOfPiece.BISHOP, positionX, positionY, colour);
 
     }
     private static Pair[] candidateForMoves = {new Pair(1, 1), new Pair(1, -1), new Pair(-1, -1), new Pair(-1, 1)};
+
+    @Override
+    public Piece moveActualPiece(Move move) {
+        return new Bishop(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getX(), move.getPieceToMove().getColour());
+    }
+
     @Override
     public List<Move> AvailableMoves(Board board) {
 
@@ -35,7 +41,7 @@ public class Bishop extends Piece{
 
                     Tile examinedTile = board.getTile(candidateForMove);
                     if (!examinedTile.isBusy()) {
-                        availableMoves.add(new Move.validMove(board, this, candidateForMove));
+                        availableMoves.add(new Move.standardMove(board, this, candidateForMove));
                     }
                     else {
                         final Piece pieceAtDestination = examinedTile.getPiece();

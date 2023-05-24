@@ -14,11 +14,16 @@ import static com.chess.engine.board.BoardFeature.numberOfTilesInColumn;
 
 public class Rock extends Piece{
 
-    public Rock(int positionX, int positionY, Colour colour) {
-        super(positionX, positionY, colour);
+    public Rock( int positionX, int positionY, Colour colour) {
+        super(typeOfPiece.ROCK, positionX, positionY, colour);
 
     }
     private static Pair[] candidateForMoves = {new Pair(1, 0), new Pair(0, 1), new Pair(-1, 0), new Pair(0, -1)};
+
+    @Override
+    public Piece moveActualPiece(Move move) {
+        return new Rock(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
+    }
     @Override
     public List<Move> AvailableMoves(Board board) {
 
@@ -35,7 +40,7 @@ public class Rock extends Piece{
 
                     Tile examinedTile = board.getTile(candidateForMove);
                     if (!examinedTile.isBusy()) {
-                        availableMoves.add(new Move.validMove(board, this, candidateForMove));
+                        availableMoves.add(new Move.standardMove(board, this, candidateForMove));
                     }
                     else {
                         final Piece pieceAtDestination = examinedTile.getPiece();
