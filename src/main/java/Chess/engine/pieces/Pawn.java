@@ -1,15 +1,13 @@
-package com.chess.engine.pieces;
+package Chess.engine.pieces;
 
-import com.chess.engine.Colour;
-import com.chess.engine.Pair;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.BoardFeature;
-import com.chess.engine.moves.Move;
+import Chess.engine.Colour;
+import Chess.engine.Pair;
+import Chess.engine.board.Board;
+import Chess.engine.board.BoardFeature;
+import Chess.engine.moves.Move;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.chess.engine.board.BoardFeature.numberOfTilesInColumn;
 
 public class Pawn extends Piece{
 
@@ -36,7 +34,7 @@ public class Pawn extends Piece{
                 availableMoves.add(new Move.standardMove(board, this, candidateForMove));
             }
             else if (currentVectorMove.equals(new Pair(0, 2)) && !board.getTile(candidateForMove).isBusy() && (this.isWhite() && this.coordinate.getY() == 1 ||
-                    this.isBlack() && this.coordinate.getY() == numberOfTilesInColumn-2)){
+                    this.isBlack() && this.coordinate.getY() == BoardFeature.numberOfTilesInColumn-2)){
                 Pair placeBeforeJump = new Pair(this.coordinate.getX(), this.coordinate.getY()+ getColour().getDirection());
                 if(!board.getTile(candidateForMove).isBusy()) {
                     availableMoves.add(new Move.standardMove(board, this, candidateForMove));

@@ -1,9 +1,9 @@
-package com.chess.engine.pieces;
+package Chess.engine.pieces;
 
-import com.chess.engine.Colour;
-import com.chess.engine.Pair;
-import com.chess.engine.board.Board;
-import com.chess.engine.moves.Move;
+import Chess.engine.Colour;
+import Chess.engine.Pair;
+import Chess.engine.board.Board;
+import Chess.engine.moves.Move;
 
 import java.util.List;
 
@@ -79,10 +79,20 @@ public abstract class Piece {
             public boolean isKing() {
                 return false;
             }
+
+            @Override
+            public boolean isRock() {
+                return false;
+            }
         },
         KNIGHT("H") {
             @Override
             public boolean isKing() {
+                return false;
+            }
+
+            @Override
+            public boolean isRock() {
                 return false;
             }
         },
@@ -91,10 +101,20 @@ public abstract class Piece {
             public boolean isKing() {
                 return false;
             }
+
+            @Override
+            public boolean isRock() {
+                return false;
+            }
         },
         QUEEN("Q") {
             @Override
             public boolean isKing() {
+                return false;
+            }
+
+            @Override
+            public boolean isRock() {
                 return false;
             }
         },
@@ -103,11 +123,21 @@ public abstract class Piece {
             public boolean isKing() {
                 return true;
             }
+
+            @Override
+            public boolean isRock() {
+                return false;
+            }
         },
         ROCK("R") {
             @Override
             public boolean isKing() {
                 return false;
+            }
+
+            @Override
+            public boolean isRock() {
+                return true;
             }
         };
 
@@ -123,6 +153,7 @@ public abstract class Piece {
         }
         public abstract boolean isKing();
 
+        public abstract boolean isRock();
     }
 
 

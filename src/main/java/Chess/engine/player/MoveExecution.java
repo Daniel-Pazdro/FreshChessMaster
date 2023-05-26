@@ -1,7 +1,7 @@
-package com.chess.engine.player;
+package Chess.engine.player;
 
-import com.chess.engine.board.Board;
-import com.chess.engine.moves.Move;
+import Chess.engine.board.Board;
+import Chess.engine.moves.Move;
 
 public class MoveExecution {
 

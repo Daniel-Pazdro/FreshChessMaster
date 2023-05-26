@@ -1,28 +1,26 @@
-package com.chess.engine.pieces;
+package Chess.engine.pieces;
 
-import com.chess.engine.Colour;
-import com.chess.engine.Pair;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.BoardFeature;
-import com.chess.engine.board.Tile;
-import com.chess.engine.moves.Move;
+import Chess.engine.Colour;
+import Chess.engine.Pair;
+import Chess.engine.board.Board;
+import Chess.engine.board.BoardFeature;
+import Chess.engine.board.Tile;
+import Chess.engine.moves.Move;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.chess.engine.board.BoardFeature.numberOfTilesInColumn;
+public class Queen extends Piece{
 
-public class Rock extends Piece{
-
-    public Rock( int positionX, int positionY, Colour colour) {
-        super(typeOfPiece.ROCK, positionX, positionY, colour);
+    public Queen( int positionX, int positionY, Colour colour) {
+        super(typeOfPiece.QUEEN, positionX, positionY, colour);
 
     }
-    private static Pair[] candidateForMoves = {new Pair(1, 0), new Pair(0, 1), new Pair(-1, 0), new Pair(0, -1)};
+    private static Pair[] candidateForMoves = {new Pair(1, 0), new Pair(0, 1), new Pair(-1, 0), new Pair(0, -1), new Pair(1, 1), new Pair(1, -1), new Pair(-1, -1), new Pair(-1, 1)};
 
     @Override
     public Piece moveActualPiece(Move move) {
-        return new Rock(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
+        return new Queen(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
     }
     @Override
     public List<Move> AvailableMoves(Board board) {
@@ -59,7 +57,7 @@ public class Rock extends Piece{
 
     @Override
     public String toString() {
-        return typeOfPiece.ROCK.toString();
+        return typeOfPiece.QUEEN.toString();
     }
 
 }

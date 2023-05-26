@@ -1,14 +1,13 @@
-package com.chess.engine.board;
+package Chess.engine.board;
 
 
-import com.chess.engine.Pair;
-import com.chess.engine.pieces.Piece;
-import com.chess.engine.board.BoardFeature;
+import Chess.engine.Pair;
+import Chess.engine.pieces.Piece;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.chess.engine.board.BoardFeature.numberOfTilesInColumn;
+import static Chess.engine.board.BoardFeature.numberOfTilesInColumn;
 
 public abstract class Tile {
    // protected final int number;
@@ -41,6 +40,10 @@ public abstract class Tile {
 
     Tile(int a, int b){coordinate = new Pair(a, b);}
     public abstract Piece getPiece();
+
+    public Pair getTileCoordinate() {
+        return coordinate;
+    }
 
     public static final class EmptyTile extends Tile{
         EmptyTile(final int x, final int y){

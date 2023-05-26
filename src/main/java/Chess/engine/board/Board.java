@@ -1,22 +1,19 @@
-package com.chess.engine.board;
+package Chess.engine.board;
 
-import com.chess.engine.Colour;
-import com.chess.engine.Pair;
-import com.chess.engine.player.WhitePlayer;
-import com.chess.engine.player.BlackPlayer;
-import com.chess.engine.player.Player;
-import com.chess.engine.moves.Move;
-import com.chess.engine.pieces.*;
+import Chess.engine.Colour;
+import Chess.engine.Pair;
+import Chess.engine.moves.Move;
+import Chess.engine.pieces.*;
+import Chess.engine.player.WhitePlayer;
+import Chess.engine.player.BlackPlayer;
+import Chess.engine.player.Player;
+import Chess.engine.pieces.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.chess.engine.pieces.Piece;
-
-import static com.chess.engine.Colour.BLACK;
-import static com.chess.engine.Colour.WHITE;
-import static com.chess.engine.board.BoardFeature.numberOfTilesInColumn;
+import static Chess.engine.board.BoardFeature.numberOfTilesInColumn;
 
 public class Board {
     private final ArrayList<ArrayList<Tile>> gameBoard;
@@ -30,8 +27,8 @@ public class Board {
 
     private Board (Builder builder){
         gameBoard = createGameBoard(builder);
-        whitePieces = calculateActivePieces(gameBoard, WHITE);
-        blackPieces = calculateActivePieces(gameBoard, BLACK);
+        whitePieces = calculateActivePieces(gameBoard, Colour.WHITE);
+        blackPieces = calculateActivePieces(gameBoard, Colour.BLACK);
 
         final ArrayList<Move> whiteLegalMoves = calculateValidMoves(this.whitePieces);
         final ArrayList<Move> blackLegalMoves = calculateValidMoves(this.blackPieces);
@@ -69,41 +66,41 @@ public class Board {
     public static Board createStandardBoardImpl() {
         final Builder builder = new Builder();
         // Black
-        builder.setPiece(new Rock(0, 7, BLACK));
-        builder.setPiece(new Knight(1, 7, BLACK));
-        builder.setPiece(new Bishop(2, 7, BLACK));
-        builder.setPiece(new Queen(3, 7, BLACK));
-        builder.setPiece(new King(4,7, BLACK));
-        builder.setPiece(new Bishop(5, 7, BLACK));
-        builder.setPiece(new Knight(6, 7, BLACK));
-        builder.setPiece(new Rock(7, 7, BLACK));
-        builder.setPiece(new Pawn(0, 6, BLACK));
-        builder.setPiece(new Pawn(1, 6, BLACK));
-        builder.setPiece(new Pawn(2, 6, BLACK));
-        builder.setPiece(new Pawn(3, 6, BLACK));
-        builder.setPiece(new Pawn(4, 6, BLACK));
-        builder.setPiece(new Pawn(5, 6, BLACK));
-        builder.setPiece(new Pawn(6, 6, BLACK));
-        builder.setPiece(new Pawn(7, 6, BLACK));
+        builder.setPiece(new Rock(0, 7, Colour.BLACK));
+        builder.setPiece(new Knight(1, 7, Colour.BLACK));
+        builder.setPiece(new Bishop(2, 7, Colour.BLACK));
+        builder.setPiece(new Queen(3, 7, Colour.BLACK));
+        builder.setPiece(new King(4,7, Colour.BLACK));
+        builder.setPiece(new Bishop(5, 7, Colour.BLACK));
+        builder.setPiece(new Knight(6, 7, Colour.BLACK));
+        builder.setPiece(new Rock(7, 7, Colour.BLACK));
+        builder.setPiece(new Pawn(0, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(1, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(2, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(3, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(4, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(5, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(6, 6, Colour.BLACK));
+        builder.setPiece(new Pawn(7, 6, Colour.BLACK));
         // White
-        builder.setPiece(new Rock(0, 0, WHITE));
-        builder.setPiece(new Knight(1, 0, WHITE));
-        builder.setPiece(new Bishop(2, 0, WHITE));
-        builder.setPiece(new Queen(3, 0, WHITE));
-        builder.setPiece(new King(4,0, WHITE));
-        builder.setPiece(new Bishop(5, 0, WHITE));
-        builder.setPiece(new Knight(6, 0, WHITE));
-        builder.setPiece(new Rock(7, 0, WHITE));
-        builder.setPiece(new Pawn(0, 1, WHITE));
-        builder.setPiece(new Pawn(1, 1, WHITE));
-        builder.setPiece(new Pawn(2, 1, WHITE));
-        builder.setPiece(new Pawn(3, 1, WHITE));
-        builder.setPiece(new Pawn(4, 1, WHITE));
-        builder.setPiece(new Pawn(5, 1, WHITE));
-        builder.setPiece(new Pawn(6, 1, WHITE));
-        builder.setPiece(new Pawn(7, 1, WHITE));
+        builder.setPiece(new Rock(0, 0, Colour.WHITE));
+        builder.setPiece(new Knight(1, 0, Colour.WHITE));
+        builder.setPiece(new Bishop(2, 0, Colour.WHITE));
+        builder.setPiece(new Queen(3, 0, Colour.WHITE));
+        builder.setPiece(new King(4,0, Colour.WHITE));
+        builder.setPiece(new Bishop(5, 0, Colour.WHITE));
+        builder.setPiece(new Knight(6, 0, Colour.WHITE));
+        builder.setPiece(new Rock(7, 0, Colour.WHITE));
+        builder.setPiece(new Pawn(0, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(1, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(2, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(3, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(4, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(5, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(6, 1, Colour.WHITE));
+        builder.setPiece(new Pawn(7, 1, Colour.WHITE));
         //white to move
-        builder.setPlayer(WHITE);
+        builder.setPlayer(Colour.WHITE);
         //build the board
         return builder.build();
     }
@@ -158,6 +155,9 @@ public class Board {
 
         public Board build() {
             return new Board(this);
+        }
+
+        public void setEnPassantPawn(Pawn movedPawn) {
         }
     }
 

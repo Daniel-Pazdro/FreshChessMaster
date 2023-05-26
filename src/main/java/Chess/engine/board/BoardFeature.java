@@ -1,6 +1,6 @@
-package com.chess.engine.board;
+package Chess.engine.board;
 
-import com.chess.engine.Pair;
+import Chess.engine.Pair;
 
 public class BoardFeature {
     public static final int numberOfTilesInColumn = 8;

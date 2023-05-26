@@ -1,14 +1,13 @@
-package com.chess.engine.player;
+package Chess.engine.player;
 
-import com.chess.engine.Colour;
-import com.chess.engine.Pair;
-import com.chess.engine.board.Board;
-import com.chess.engine.pieces.King;
-import com.chess.engine.moves.Move;
-import com.chess.engine.pieces.Piece;
+import Chess.engine.Colour;
+import Chess.engine.Pair;
+import Chess.engine.board.Board;
+import Chess.engine.moves.Move;
+import Chess.engine.pieces.King;
+import Chess.engine.pieces.Piece;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class Player {
     protected final Board board;
@@ -17,17 +16,19 @@ public abstract class Player {
 
     private final boolean isCheck;
 
-    Player(Board board, ArrayList<Move> mylegalMoves, final ArrayList<Move> opponentMoves){
+    Player(final Board board, final ArrayList<Move> mylegalMoves, final ArrayList<Move> opponentMoves){
         this.board = board;
         playerKing = makeKing();
-        this.legalMoves = mylegalMoves;
+        mylegalMoves.addAll(calcKingCastles(mylegalMoves, opponentMoves));
+        legalMoves = mylegalMoves;
+
         isCheck = !Player.attacksOnTile(this.playerKing.getCoordinate(), opponentMoves).isEmpty();
     }
 
     public ArrayList<Move> getLegalMoves(){
         return legalMoves;
     }
-    private static ArrayList<Move> attacksOnTile(Pair position, ArrayList<Move> listOfMoves) {
+    protected static ArrayList<Move> attacksOnTile(Pair position, ArrayList<Move> listOfMoves) {
         ArrayList<Move> listOfAttackingMoves = new ArrayList<>();
         for(Move move: listOfMoves){
             if(position.equals(move.getMoveCoordinates())){
@@ -51,6 +52,8 @@ public abstract class Player {
     public abstract ArrayList<Piece> getActivePieces();
     public abstract Colour getColour();
     public abstract Player getOpponent();
+
+    protected abstract ArrayList<Move> calcKingCastles(ArrayList<Move> playerLegals, ArrayList<Move> opponentLegals);
 
     public boolean isValidMove(final Move move){
         return this.legalMoves.contains(move);
