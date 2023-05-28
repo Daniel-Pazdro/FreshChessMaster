@@ -56,7 +56,11 @@ public class BlackPlayer extends Player{
             }
             if(!this.board.getTile(new Pair(1, 7)).isBusy() && !this.board.getTile(new Pair(2, 7)).isBusy() && !this.board.getTile(new Pair(3, 7)).isBusy()){
 
-                if(this.board.getTile(new Pair(0, 7)).isBusy() && this.board.getTile(new Pair(0, 7)).getPiece().isFirstMove()){
+                if(this.board.getTile(new Pair(0, 7)).isBusy()
+                        && this.board.getTile(new Pair(0, 7)).getPiece().isFirstMove()
+                        && Player.attacksOnTile(new Pair(2, 7), opponentLegals).isEmpty()
+                        && Player.attacksOnTile(new Pair(3, 7), opponentLegals).isEmpty()
+                        && this.board.getTile(new Pair (0,7)).getPiece().getPieceType().isRock()){
                     kingCastles.add(new Move.castlingOfTheKingSide(board, playerKing, new Pair(2, 7), (Rock) board.getTile(new Pair(0, 7)).getPiece(), board.getTile(new Pair(0, 7)).getTileCoordinate(), new Pair(3, 7)));
 
                 }

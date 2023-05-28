@@ -44,7 +44,7 @@ public class Queen extends Piece{
                         final Piece pieceAtDestination = examinedTile.getPiece();
                         final Colour pieceAtDestinationColour = pieceAtDestination.getColour();
                         if (this.colour != pieceAtDestinationColour) {
-                            availableMoves.add(new Move.AttackingMove(board, this, candidateForMove, pieceAtDestination));
+                            availableMoves.add(new Move.MajorAttackMove(board, this, candidateForMove, pieceAtDestination));
                         }
                         break;
                     }

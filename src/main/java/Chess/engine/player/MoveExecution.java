@@ -15,6 +15,9 @@ public class MoveExecution {
         this.moveStatus = status;
     }
 
-    MoveStatus getStatus(){return moveStatus;}
+    public MoveStatus getStatus(){return moveStatus;}
 
+    public Board getTransitionBoard() {
+        return board;
+    }
 }

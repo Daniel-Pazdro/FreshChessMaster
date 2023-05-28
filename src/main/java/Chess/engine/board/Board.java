@@ -19,6 +19,7 @@ public class Board {
     private final ArrayList<ArrayList<Tile>> gameBoard;
     private final ArrayList<Piece> whitePieces;
     private final ArrayList<Piece> blackPieces;
+//    private final Pawn enPassantPawn;
 
 
     public final WhitePlayer whitePlayer;
@@ -26,6 +27,8 @@ public class Board {
     public final Player current;
 
     private Board (Builder builder){
+        //HERE IS TO CHECK
+//        this.enPassantPawn = builder.build().enPassantPawn;
         gameBoard = createGameBoard(builder);
         whitePieces = calculateActivePieces(gameBoard, Colour.WHITE);
         blackPieces = calculateActivePieces(gameBoard, Colour.BLACK);
@@ -156,9 +159,9 @@ public class Board {
         public Board build() {
             return new Board(this);
         }
-
-        public void setEnPassantPawn(Pawn movedPawn) {
-        }
+//
+//        public void setEnPassantPawn(Pawn movedPawn) {
+//        }
     }
 
     @Override

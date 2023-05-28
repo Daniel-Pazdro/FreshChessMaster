@@ -56,7 +56,12 @@ public class WhitePlayer extends Player {
             }
             if(!this.board.getTile(new Pair(1, 0)).isBusy() && !this.board.getTile(new Pair(2, 0)).isBusy() && !this.board.getTile(new Pair(3, 0)).isBusy()){
 
-                if(this.board.getTile(new Pair(0, 0)).isBusy() && this.board.getTile(new Pair(0, 0)).getPiece().isFirstMove()){
+                if(this.board.getTile(new Pair(0, 0)).isBusy()
+                        && this.board.getTile(new Pair(0, 0)).getPiece().isFirstMove()
+                        && Player.attacksOnTile(new Pair(3, 0), opponentLegals).isEmpty()
+                        && Player.attacksOnTile(new Pair(2, 0), opponentLegals).isEmpty()
+                        && this.board.getTile(new Pair(0, 0)).getPiece().getPieceType().isRock())
+                {
                     kingCastles.add(new Move.castlingOfTheKingSide(board, playerKing, new Pair(2, 0), (Rock) board.getTile(new Pair(0, 0)).getPiece(), board.getTile(new Pair(0, 0)).getTileCoordinate(), new Pair(5, 0)));
                 }
             }

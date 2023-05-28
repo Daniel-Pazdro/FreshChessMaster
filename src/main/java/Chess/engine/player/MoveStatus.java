@@ -4,25 +4,25 @@ public enum MoveStatus {
 
     DONE{
         @Override
-        boolean isDone(){
+        public boolean isDone(){
             return true;
         }
     },
 
     FORBIDDEN{
         @Override
-        boolean isDone() {
+        public boolean isDone() {
             return false;
         }
     },
 
     LEAVES_IN_CHECK{
         @Override
-        boolean isDone() {
+        public boolean isDone() {
             return false;
         }
     };
 
-    abstract boolean isDone();
+    public abstract boolean isDone();
 
 }

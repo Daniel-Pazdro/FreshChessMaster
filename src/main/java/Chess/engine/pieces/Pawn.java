@@ -31,27 +31,37 @@ public class Pawn extends Piece{
                 continue;
             }
             if(currentVectorMove.equals(new Pair(0, 1)) && currentVectorMove.getX() == 0 && !board.getTile(candidateForMove).isBusy()){
-                availableMoves.add(new Move.standardMove(board, this, candidateForMove));
+                availableMoves.add(new Move.pawnMove(board, this, candidateForMove));
+//                if(this.colour.isPawnPromotionSquare(candidateForMove)){
+//                    availableMoves.add(new Move.PawnPromotion(board, this, candidateForMove));
+//                }
+//                else{
+//                    availableMoves.add(new Move.pawnMove(board, this, candidateForMove));
+//                }
             }
+
+
+
+
             else if (currentVectorMove.equals(new Pair(0, 2)) && !board.getTile(candidateForMove).isBusy() && (this.isWhite() && this.coordinate.getY() == 1 ||
                     this.isBlack() && this.coordinate.getY() == BoardFeature.numberOfTilesInColumn-2)){
                 Pair placeBeforeJump = new Pair(this.coordinate.getX(), this.coordinate.getY()+ getColour().getDirection());
-                if(!board.getTile(candidateForMove).isBusy()) {
-                    availableMoves.add(new Move.standardMove(board, this, candidateForMove));
+                if(!board.getTile(candidateForMove).isBusy() && !board.getTile(placeBeforeJump).isBusy()) {
+                    availableMoves.add(new Move.pawnJumpMove(board, this, candidateForMove));
                 }
             }
 
             else if(currentVectorMove.equals(new Pair(1, 1)) && board.getTile(candidateForMove).isBusy()){
                 Piece candidateToBeBittenByPawn = board.getTile(candidateForMove).getPiece();
                 if(this.colour != candidateToBeBittenByPawn.colour){
-                    availableMoves.add(new Move.standardMove(board, this, candidateForMove));
+                    availableMoves.add(new Move.pawnAttackMove(board, this, candidateForMove, candidateToBeBittenByPawn));
                 }
             }
 
             else if(currentVectorMove.equals(new Pair(-1, 1)) && board.getTile(candidateForMove).isBusy()){
                 Piece candidateToBeBittenByPawn = board.getTile(candidateForMove).getPiece();
                 if(this.colour != candidateToBeBittenByPawn.colour){
-                    availableMoves.add(new Move.standardMove(board, this, candidateForMove));
+                    availableMoves.add(new Move.pawnAttackMove(board, this, candidateForMove, candidateToBeBittenByPawn));
                 }
             }
         }
