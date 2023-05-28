@@ -33,7 +33,8 @@ public abstract class Tile {
             if (tmp.getX() == x && tmp.getY() == y)
                 return emptyBoard.get(tmp);
         }
-        return new BusyTile(x, y, piece);
+        System.out.println("wychpodzi");
+        return null;
     }
 
     public abstract boolean isBusy();

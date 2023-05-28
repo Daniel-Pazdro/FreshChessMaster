@@ -125,6 +125,10 @@ public class Table {
                             sourceTile = null;
                             destinationTile = null;
                             MovedPiece = null;
+                            System.out.println("CLICK");
+                            StringBuilder s= new StringBuilder();
+                            s.append(board.getTile(new Pair(tileCoordinateX, tileCoordinateY)).getPiece().toString());
+                            System.out.println(s);
                             //this part represents the first click
                         }
                         else if(isLeftMouseButton(e)){
