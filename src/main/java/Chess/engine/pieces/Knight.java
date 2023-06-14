@@ -1,53 +1,93 @@
 package Chess.engine.pieces;
 
 import Chess.engine.Colour;
-import Chess.engine.Pair;
+import Chess.engine.PieceType;
 import Chess.engine.board.Board;
-import Chess.engine.board.BoardFeature;
-import Chess.engine.board.Tile;
-import Chess.engine.moves.Move;
-
-import java.util.ArrayList;
-import java.util.List;
+import Chess.engine.board.Field;
 
 public class Knight extends Piece{
-    public Knight( int positionX, int positionY, Colour colour) {
-        super(typeOfPiece.KNIGHT, positionX, positionY, colour);
+    public Knight(Colour colour, Field sourceField, boolean firstMove) {
+        super(colour, PieceType.KNIGHT, sourceField, firstMove);
     }
-    private final static Pair[] candidateForMoves = {new Pair(2, -1), new Pair(1, -2), new Pair(2, 1), new Pair(1, 2), new Pair(-2, 1), new Pair(-1, 2), new Pair(-2, -1), new Pair(-1, -2) };
-    @Override
-    public Piece moveActualPiece(Move move) {
-        return new Knight(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
-    }
-    @Override
-    public List<Move> AvailableMoves(Board board) {
-        final List<Move> availableMoves = new ArrayList<>();
-        Pair candidateForMove = new Pair(this.coordinate);
+    
 
-        for(Pair current : candidateForMoves){
-            candidateForMove.setX(coordinate.getX() + current.getX());
-            candidateForMove.setY(coordinate.getY() + current.getY());
-            if(BoardFeature.isValidMove(candidateForMove)) {
-                final Tile examinedTile = board.getTile(candidateForMove);
-                if (!examinedTile.isBusy()) {
-                    availableMoves.add(new Move.standardMove(board, this, candidateForMove));
-                } else {
-                    final Piece pieceAtDestination = examinedTile.getPiece();
-                    final Colour pieceAtDestinationColour = pieceAtDestination.getColour();
-                    if(this.colour != pieceAtDestinationColour){
-                        availableMoves.add(new Move.MajorAttackMove(board, this, candidateForMove, pieceAtDestination));
-                    }
-                }
-            }
-
-        }
-//here there may be somekind problems to check
-
-        return availableMoves;
-    }
+	@Override
+	public void addFieldAttack(Board board, boolean isWhiteMove) {
+		if (this.sourceField.row < 7 && this.sourceField.column + 1 < 7 ) {
+			board.gameBoard[this.sourceField.column + 2][this.sourceField.row + 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7 && this.sourceField.column - 1 > 0 ) {
+			board.gameBoard[this.sourceField.column - 2][this.sourceField.row + 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0 && this.sourceField.column + 1 < 7 ) {
+			board.gameBoard[this.sourceField.column + 2][this.sourceField.row - 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0 && this.sourceField.column - 1 > 0 ) {
+			board.gameBoard[this.sourceField.column - 2][this.sourceField.row - 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row + 1 < 7 && this.sourceField.column < 7 ) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 2].addFieldAttacker(this);
+		}
+		if (this.sourceField.row + 1 < 7 && this.sourceField.column > 0 ) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 2].addFieldAttacker(this);
+		}
+		if (this.sourceField.row - 1> 0 && this.sourceField.column < 7 ) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 2].addFieldAttacker(this);
+		}
+		if (this.sourceField.row - 1 > 0 && this.sourceField.column > 0 ) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 2].addFieldAttacker(this);
+		}
+	}
+	
+	@Override
+	public void removeFieldAttack(Board board) {
+		if (this.sourceField.row < 7 && this.sourceField.column + 1 < 7 ) {
+			board.gameBoard[this.sourceField.column + 2][this.sourceField.row + 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7 && this.sourceField.column - 1 > 0 ) {
+			board.gameBoard[this.sourceField.column - 2][this.sourceField.row + 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0 && this.sourceField.column + 1 < 7 ) {
+			board.gameBoard[this.sourceField.column + 2][this.sourceField.row - 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0 && this.sourceField.column - 1 > 0 ) {
+			board.gameBoard[this.sourceField.column - 2][this.sourceField.row - 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row + 1 < 7 && this.sourceField.column < 7 ) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 2].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row + 1 < 7 && this.sourceField.column > 0 ) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 2].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row - 1> 0 && this.sourceField.column < 7 ) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 2].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row - 1 > 0 && this.sourceField.column > 0 ) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 2].removeFieldAttacker(this);
+		}
+	}
+	
+    
     @Override
+	public boolean isValidMove(Board board, Field destinationField, boolean isWhiteMove) {
+    	boolean isValid = false;
+    	int tmpRow = Math.abs(destinationField.row - sourceField.row);
+    	int tmpCol = Math.abs(destinationField.column - sourceField.column);
+    	
+    	if (((tmpRow == 2 && tmpCol == 1) || (tmpRow == 1 && tmpCol == 2)) && destinationField.isOccupied() == false) {
+    		isValid = true;
+    	} else if (((tmpRow == 2 && tmpCol == 1) || (tmpRow == 1 && tmpCol == 2)) && 
+    			   destinationField.isOccupied() == true && destinationField.isEnemy(this) == true) {
+    		isValid = true;
+    	}
+
+		return isValid;
+	}
+
+    
+    
+	@Override
     public String toString() {
-        return typeOfPiece.KNIGHT.toString();
+        return "H";
     }
-
 }

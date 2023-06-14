@@ -5,10 +5,9 @@ import Chess.engine.PieceType;
 import Chess.engine.board.Board;
 import Chess.engine.board.Field;
 
-
-public class Bishop extends Piece{
-    public Bishop(Colour colour, Field sourceField, boolean firstMove) {
-        super(colour, PieceType.BISHOP, sourceField, firstMove);
+public class Rook extends Piece{
+    public Rook(Colour colour, Field sourceField, boolean firstMove) {
+        super(colour, PieceType.ROOK, sourceField, firstMove);
     }
 
     private boolean isObstacle(Board board, Field destinationField) {
@@ -20,18 +19,18 @@ public class Bishop extends Piece{
     	int curRow = myRow;
     	int curCol = myCol;
     	
-    	while (curCol != destCol && curRow != destRow) {
-    		if (myRow < destRow) {
+    	while (curCol != destCol || curRow != destRow) {
+    		if (destCol == myCol && myRow < destRow) {
     			curRow++;
-    		} else {
+    		} else if (destCol == myCol) {
     			curRow--;
     		}
-    		if (myCol < destCol) {
+    		if (myRow == destRow && myCol < destCol) {
     			curCol++;
-    		} else {
+    		} else if (myRow == destRow) {
     			curCol--;
     		}
-    		if (curCol != destCol && curRow != destRow && board.gameBoard[curCol][curRow].getPiece() != null)
+    		if ((curCol != destCol || curRow != destRow) && board.gameBoard[curCol][curRow].getPiece() != null)
     		{
     			isObstacle = true;
     			break;
@@ -46,8 +45,7 @@ public class Bishop extends Piece{
 		int curRow = this.sourceField.row;
 		int curCol = this.sourceField.column;
 		boolean behindObstacle = false;
-		while (curCol < 7 && curRow < 7) {
-			curRow++;
+		while (curCol < 7) {
 			curCol++;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
@@ -62,29 +60,10 @@ public class Bishop extends Piece{
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
 		behindObstacle = false;
-		while (curCol < 7 && curRow > 0) {
-			curRow--;
-			curCol++;
-			if(behindObstacle == false) {
-				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
-			} else {
-				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
-				behindObstacle = true;
-			}
-		}
-		
-		curRow = this.sourceField.row;
-		curCol = this.sourceField.column;
-		behindObstacle = false;
-		while (curCol > 0 && curRow > 0) {
-			curRow--;
+		while (curCol > 0) {
 			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
@@ -96,16 +75,31 @@ public class Bishop extends Piece{
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
 		behindObstacle = false;
-		while (curCol > 0 && curRow < 7) {
+		while (curRow < 7) {
 			curRow++;
-			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
+				behindObstacle = true;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curRow > 0) {
+			curRow--;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
@@ -116,44 +110,44 @@ public class Bishop extends Piece{
 		int curRow = this.sourceField.row;
 		int curCol = this.sourceField.column;
 		
-		while (curCol < 7 && curRow < 7) {
-			curRow++;
+		while (curCol < 7) {
 			curCol++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
 		
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
-		while (curCol < 7 && curRow > 0) {
-			curRow--;
-			curCol++;
-			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
-				break;
-			}
-		}
-		
-		curRow = this.sourceField.row;
-		curCol = this.sourceField.column;
-		while (curCol > 0 && curRow > 0) {
-			curRow--;
+		while (curCol > 0) {
 			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
 		
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
-		while (curCol > 0 && curRow < 7) {
+		while (curRow < 7) {
 			curRow++;
-			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curRow > 0) {
+			curRow--;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -165,10 +159,10 @@ public class Bishop extends Piece{
     	int tmpRow = Math.abs(destinationField.row - sourceField.row);
     	int tmpCol = Math.abs(destinationField.column - sourceField.column);
     	
-    	if (tmpRow == tmpCol && 
+    	if (((tmpRow != 0 && tmpCol == 0) || (tmpRow == 0 && tmpCol != 0)) && 
     		destinationField.isOccupied() == false && isObstacle(board, destinationField) == false) {
     		isValid = true;
-    	} else if (tmpRow == tmpCol &&
+    	} else if (((tmpRow != 0 && tmpCol == 0) || (tmpRow == 0 && tmpCol != 0))  && 
     			destinationField.isOccupied() == true &&  isObstacle(board, destinationField) == false &&
     			destinationField.getPiece().getColour() != this.getColour()) {
     		isValid = true;
@@ -177,11 +171,10 @@ public class Bishop extends Piece{
 		return isValid;
 	}
 
-	
-	
 	@Override
     public String toString() {
-        return "B";
+        return "R";
     }
+
 
 }

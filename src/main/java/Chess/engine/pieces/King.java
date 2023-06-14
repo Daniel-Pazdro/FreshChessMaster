@@ -1,53 +1,176 @@
 package Chess.engine.pieces;
 
 import Chess.engine.Colour;
-import Chess.engine.Pair;
+import Chess.engine.PieceType;
 import Chess.engine.board.Board;
-import Chess.engine.board.BoardFeature;
-import Chess.engine.board.Tile;
-import Chess.engine.moves.Move;
-
-import java.util.ArrayList;
-import java.util.List;
+import Chess.engine.board.Field;
 
 public class King extends Piece{
-
-    public King(int positionX, int positionY, Colour colour) {
-        super(typeOfPiece.KING, positionX, positionY, colour);
+	boolean isChecked = false;
+	
+    public King(Colour colour, Field sourceField, boolean firstMove) {
+        super(colour, PieceType.KING, sourceField, firstMove);
     }
 
-    private static Pair[] candidateForMoves = {new Pair(1, 1), new Pair(1, -1), new Pair(-1, -1), new Pair(-1, 1),
-            new Pair(0, 1), new Pair(1, 0), new Pair(-1, 0), new Pair(0, -1)};
-    @Override
-    public Piece moveActualPiece(Move move) {
-        return new King(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
+    public void setChecked(boolean isChecked) {
+    	this.isChecked = isChecked;
     }
-
-    @Override
-    public List<Move> AvailableMoves(Board board) {
-        final List<Move> availableMoves = new ArrayList<>();
-        Pair candidateForMove = new Pair(this.coordinate);
-
-        for (Pair current : candidateForMoves) {
-            candidateForMove.setX(coordinate.getX() + current.getX());
-            candidateForMove.setY(coordinate.getY() + current.getY());
-            if (BoardFeature.isValidMove(candidateForMove)) {
-                final Tile examinedTile = board.getTile(candidateForMove);
-                if (!examinedTile.isBusy()) {
-                    availableMoves.add(new Move.standardMove(board, this, candidateForMove));
-                } else {
-                    final Piece pieceAtDestination = examinedTile.getPiece();
-                    final Colour pieceAtDestinationColour = pieceAtDestination.getColour();
-                    if (this.colour != pieceAtDestinationColour) {
-                        availableMoves.add(new Move.MajorAttackMove(board, this, candidateForMove, pieceAtDestination));
-                    }
-                }
-            }
-        }
-        return availableMoves;
+    
+    public boolean getChecked( ) {
+    	return isChecked;
     }
-    @Override
+    
+    private boolean isObstacle(Board board, Field destinationField) {
+    	boolean isObstacle = false;
+    	int myRow = this.sourceField.row;
+    	int myCol = this.sourceField.column;
+    	int destRow = destinationField.row;
+    	int destCol = destinationField.column;
+    	int curRow = myRow;
+    	int curCol = myCol;
+    	
+    	while (curCol != destCol || curRow != destRow) {
+    		if (myRow == destRow && myCol < destCol) {
+    			curCol++;
+    		} else if (myRow == destRow) {
+    			curCol--;
+    		}
+    		if ((curCol != destCol || curRow != destRow) && board.gameBoard[curCol][curRow].getPiece() != null)
+    		{
+    			isObstacle = true;
+    			break;
+    		}
+    	}
+    	
+    	return isObstacle;
+    }
+    
+    private boolean isRookMoved(Board board, Field destinationField) {
+    	boolean isMoved = false;
+    	if (this.sourceField.column < destinationField.column) {
+    		if(board.gameBoard[7][this.sourceField.row].getPiece() != null && board.gameBoard[7][this.sourceField.row].getPiece().type == PieceType.ROOK && 
+    		   board.gameBoard[7][this.sourceField.row].getPiece().firstMove == true ) {
+    			isMoved = false;
+    		}
+    	} else if (this.sourceField.column > destinationField.column) {
+    		if(board.gameBoard[0][this.sourceField.row].getPiece() != null && board.gameBoard[0][this.sourceField.row].getPiece().type == PieceType.ROOK && 
+    		   board.gameBoard[0][this.sourceField.row].getPiece().firstMove == true ) {
+    			isMoved = false;
+    		}
+    	}
+
+    	return isMoved;
+    }
+    
+	private void swapRook(Board board, Field destinationField, boolean isWhiteMove) {
+		if (this.sourceField.column < destinationField.column) {
+			sourceField.getPiece().removeFieldAttack(board);
+			board.gameBoard[7][this.sourceField.row].getPiece().removeFieldAttack(board);
+			board.gameBoard[7][this.sourceField.row].recalculateAttackers(board, isWhiteMove);
+			board.gameBoard[5][this.sourceField.row].setPiece(board.gameBoard[7][this.sourceField.row].getPiece());
+			board.gameBoard[5][this.sourceField.row].getPiece().sourceField.column = 5;
+			board.gameBoard[5][this.sourceField.row].getPiece().addFieldAttack(board, isWhiteMove);
+			board.gameBoard[5][this.sourceField.row].recalculateAttackers(board, isWhiteMove);
+			board.gameBoard[7][this.sourceField.row].setPiece(null);
+    	} else if (this.sourceField.column > destinationField.column) {
+    		sourceField.getPiece().removeFieldAttack(board);
+			board.gameBoard[0][this.sourceField.row].getPiece().removeFieldAttack(board);
+			board.gameBoard[0][this.sourceField.row].recalculateAttackers(board, isWhiteMove);
+    		board.gameBoard[3][this.sourceField.row].setPiece(board.gameBoard[0][this.sourceField.row].getPiece());
+    		board.gameBoard[3][this.sourceField.row].getPiece().sourceField.column = 3;
+    		board.gameBoard[3][this.sourceField.row].getPiece().addFieldAttack(board, isWhiteMove);
+    		board.gameBoard[3][this.sourceField.row].getPiece().getSourceField().recalculateAttackers(board, isWhiteMove);
+    		board.gameBoard[0][this.sourceField.row].setPiece(null);
+    	}
+	}
+    
+	@Override
+	public void addFieldAttack(Board board, boolean isWhiteMove) {
+		if (this.sourceField.row > 0 && this.sourceField.column > 0) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0 && this.sourceField.column < 7) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7 && this.sourceField.column > 0) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7 && this.sourceField.column < 7) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.column > 0) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row].addFieldAttacker(this);
+		}
+		if (this.sourceField.column < 7) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row].addFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0) {
+			board.gameBoard[this.sourceField.column][this.sourceField.row - 1].addFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7) {
+			board.gameBoard[this.sourceField.column][this.sourceField.row + 1].addFieldAttacker(this);
+		}
+	}
+	
+	@Override
+	public void removeFieldAttack(Board board) {
+		if (this.sourceField.row > 0 && this.sourceField.column > 0) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0 && this.sourceField.column < 7) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7 && this.sourceField.column > 0) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7 && this.sourceField.column < 7) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.column > 0) {
+			board.gameBoard[this.sourceField.column - 1][this.sourceField.row].removeFieldAttacker(this);
+		}
+		if (this.sourceField.column < 7) {
+			board.gameBoard[this.sourceField.column + 1][this.sourceField.row].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row > 0) {
+			board.gameBoard[this.sourceField.column][this.sourceField.row - 1].removeFieldAttacker(this);
+		}
+		if (this.sourceField.row < 7) {
+			board.gameBoard[this.sourceField.column][this.sourceField.row + 1].removeFieldAttacker(this);
+		}
+	}
+	
+	@Override
+	public boolean isValidMove(Board board, Field destinationField, boolean isWhiteMove) {
+    	boolean isValid = false;
+    	int tmpRow = Math.abs(destinationField.row - sourceField.row);
+    	int tmpCol = Math.abs(destinationField.column - sourceField.column);
+    	
+    	if ((tmpRow < 2 && tmpCol < 2) && destinationField.isOccupied() == false && 
+    			destinationField.isAvailableForKing(isWhiteMove) == true) {
+    		this.isChecked = false;
+    		isValid = true;
+    	} else if (tmpRow == 0 && tmpCol == 2 && firstMove == true && 
+    			destinationField.isOccupied() == false && destinationField.isAvailableForKing(isWhiteMove) == true && 
+    			isObstacle(board, destinationField) == false && isRookMoved(board, destinationField) == false) {
+    		this.isChecked = false;
+    		isValid = true;
+    	} else if ((tmpRow < 2 && tmpCol < 2) && 
+    			destinationField.isOccupied() == true && destinationField.isEnemy(this) == true &&
+    			destinationField.isAvailableForKing(isWhiteMove) == true) {
+    		this.isChecked = false;
+    		isValid = true;
+ 	    }
+    	
+    	if (isValid == true && firstMove == true && tmpCol == 2) {
+    		swapRook(board, destinationField, isWhiteMove);
+    	}
+    	
+		return isValid;
+	}
+	
+	@Override
     public String toString() {
-        return typeOfPiece.KING.toString();
+        return "K";
     }
 }

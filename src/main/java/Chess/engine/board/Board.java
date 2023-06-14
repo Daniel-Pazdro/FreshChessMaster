@@ -1,187 +1,109 @@
 package Chess.engine.board;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+
 import Chess.engine.Colour;
-import Chess.engine.Pair;
-import Chess.engine.moves.Move;
 import Chess.engine.pieces.*;
-import Chess.engine.player.WhitePlayer;
-import Chess.engine.player.BlackPlayer;
-import Chess.engine.player.Player;
-import Chess.engine.pieces.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static Chess.engine.board.BoardFeature.numberOfTilesInColumn;
 
 public class Board {
-    private final ArrayList<ArrayList<Tile>> gameBoard;
-    private final ArrayList<Piece> whitePieces;
-    private final ArrayList<Piece> blackPieces;
-//    private final Pawn enPassantPawn;
+	public final int fieldsInRow = 8;
+	public final int fieldsInColumn = 8;
+	
+	public final Field[][] gameBoard = new Field[fieldsInRow][fieldsInColumn];
+	
+	public Pawn pieceToEnpassnt = null;
+	
+	public Piece whiteKing= null;
+	public Piece blackKing = null;
 
-
-    public final WhitePlayer whitePlayer;
-    public final BlackPlayer blackPlayer;
-    public final Player current;
-
-    private Board (Builder builder){
-        //HERE IS TO CHECK
-//        this.enPassantPawn = builder.build().enPassantPawn;
-        gameBoard = createGameBoard(builder);
-        whitePieces = calculateActivePieces(gameBoard, Colour.WHITE);
-        blackPieces = calculateActivePieces(gameBoard, Colour.BLACK);
-
-        final ArrayList<Move> whiteLegalMoves = calculateValidMoves(this.whitePieces);
-        final ArrayList<Move> blackLegalMoves = calculateValidMoves(this.blackPieces);
-        this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
-        this.blackPlayer = new BlackPlayer(this, whiteLegalMoves, blackLegalMoves);
-        this.current = builder.whoIsPlayingNow.choosePlayer(whitePlayer,blackPlayer);
-
+	
+    public Board() {
+    	newBoard();
     }
 
-    private ArrayList<Move> calculateValidMoves(ArrayList<Piece> setOfPieces) {
-        final ArrayList<Move> legalMoves = new ArrayList();
-        for(final Piece piece: setOfPieces){
-            legalMoves.addAll(piece.AvailableMoves(this));
-        }
+	public void newBoard() {
+		for (int row = 0; row < fieldsInRow; ++row) {
+			for (int column = 0; column < fieldsInRow; ++column) {
+				Colour color = (row+column) % 2 == 0 ? Colour.BLACK : Colour.WHITE;
+				gameBoard[column][row] = new Field(color, row, column);
+			}
+		}
 
-        return legalMoves;
+		gameBoard[0][0].setPiece(new Rook(Colour.WHITE, gameBoard[0][0], true));
+		gameBoard[7][0].setPiece(new Rook(Colour.WHITE, gameBoard[7][0], true));
+		gameBoard[0][7].setPiece(new Rook(Colour.BLACK, gameBoard[0][7], true));
+		gameBoard[7][7].setPiece(new Rook(Colour.BLACK, gameBoard[7][7], true));
+		gameBoard[1][0].setPiece(new Knight(Colour.WHITE, gameBoard[1][0], true));
+		gameBoard[6][0].setPiece(new Knight(Colour.WHITE, gameBoard[6][0], true));
+		gameBoard[1][7].setPiece(new Knight(Colour.BLACK, gameBoard[1][7], true));
+		gameBoard[6][7].setPiece(new Knight(Colour.BLACK, gameBoard[6][7], true));
+		gameBoard[2][0].setPiece(new Bishop(Colour.WHITE, gameBoard[2][0], true));
+		gameBoard[5][0].setPiece(new Bishop(Colour.WHITE, gameBoard[5][0], true));
+		gameBoard[2][7].setPiece(new Bishop(Colour.BLACK, gameBoard[2][7], true));
+		gameBoard[5][7].setPiece(new Bishop(Colour.BLACK, gameBoard[5][7], true));
+		gameBoard[3][0].setPiece(new Queen(Colour.WHITE, gameBoard[3][0], true));
+		gameBoard[3][7].setPiece(new Queen(Colour.BLACK, gameBoard[3][7], true));
+		gameBoard[4][0].setPiece(new King(Colour.WHITE, gameBoard[4][0], true));
+		whiteKing = gameBoard[4][0].getPiece();
+		gameBoard[4][7].setPiece(new King(Colour.BLACK, gameBoard[4][7], true));
+		blackKing = gameBoard[4][7].getPiece();
+
+		for(int i = 0; i < fieldsInRow; ++i) {
+			gameBoard[i][1].setPiece(new Pawn(Colour.WHITE, gameBoard[i][1], true));
+			gameBoard[i][6].setPiece(new Pawn(Colour.BLACK, gameBoard[i][6], true));
+		}
+
+		calculateAttackedFields(true);
+	}
+    
+    public void setWhiteKing(Piece k) {
+    	whiteKing = k;
     }
-
-    private ArrayList<Piece> calculateActivePieces(ArrayList<ArrayList<Tile>> gameBoard, Colour colour) {
-        final ArrayList<Piece> activePieces = new ArrayList<>();
-        for(final ArrayList<Tile> list: gameBoard){
-            for(final Tile tile : list){
-                if(tile.isBusy()){
-                    final Piece piece = tile.getPiece();
-                    if(piece.colour == colour){
-                        activePieces.add(piece);
-                    }
-                }
-            }
-        }
-        return activePieces;
+    
+    public Piece getWhiteKing() {
+    	return whiteKing;
     }
-
-
-    public static Board createStandardBoardImpl() {
-        final Builder builder = new Builder();
-        // Black
-        builder.setPiece(new Rock(0, 7, Colour.BLACK));
-        builder.setPiece(new Knight(1, 7, Colour.BLACK));
-        builder.setPiece(new Bishop(2, 7, Colour.BLACK));
-        builder.setPiece(new Queen(3, 7, Colour.BLACK));
-        builder.setPiece(new King(4,7, Colour.BLACK));
-        builder.setPiece(new Bishop(5, 7, Colour.BLACK));
-        builder.setPiece(new Knight(6, 7, Colour.BLACK));
-        builder.setPiece(new Rock(7, 7, Colour.BLACK));
-        builder.setPiece(new Pawn(0, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(1, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(2, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(3, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(4, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(5, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(6, 6, Colour.BLACK));
-        builder.setPiece(new Pawn(7, 6, Colour.BLACK));
-        // White
-        builder.setPiece(new Rock(0, 0, Colour.WHITE));
-        builder.setPiece(new Knight(1, 0, Colour.WHITE));
-        builder.setPiece(new Bishop(2, 0, Colour.WHITE));
-        builder.setPiece(new Queen(3, 0, Colour.WHITE));
-        builder.setPiece(new King(4,0, Colour.WHITE));
-        builder.setPiece(new Bishop(5, 0, Colour.WHITE));
-        builder.setPiece(new Knight(6, 0, Colour.WHITE));
-        builder.setPiece(new Rock(7, 0, Colour.WHITE));
-        builder.setPiece(new Pawn(0, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(1, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(2, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(3, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(4, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(5, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(6, 1, Colour.WHITE));
-        builder.setPiece(new Pawn(7, 1, Colour.WHITE));
-        //white to move
-        builder.setPlayer(Colour.WHITE);
-        //build the board
-        return builder.build();
+    
+    public void setBlackKing(Piece k) {
+    	blackKing = k;
     }
-
-
-    private static ArrayList<ArrayList<Tile>> createGameBoard(Builder builder) {
-        final ArrayList<ArrayList<Tile>> tiles = new ArrayList(numberOfTilesInColumn){
-        };
-
-        for(int i = 0; i < numberOfTilesInColumn; i++){
-            tiles.add(new ArrayList<>(numberOfTilesInColumn));
-            for(int j = 0; j < numberOfTilesInColumn; j++){
-                tiles.get(i).add(Tile.createTile(i, j, builder.boardConfiguration.get(new Pair(i, j))));
-            }
-        }
-        return tiles;
+    
+    public Piece getBlackKing() {
+    	return blackKing;
     }
-
-
-//    Colour whoIsPlayingNow;
-    public Tile getTile(Pair candidateForMove) {
-        for(int i = 0; i <numberOfTilesInColumn; i++){
-            if(gameBoard.get(candidateForMove.getX()).get(i).coordinate.getY() == candidateForMove.getY()){
-                return gameBoard.get(candidateForMove.getX()).get(i);
-            }
-        }
-        return null;
+    
+    
+    public void updateEnpassant(boolean isWhiteMove) {
+		if(pieceToEnpassnt != null) {
+			if ((isWhiteMove == true && pieceToEnpassnt.getColour() == Colour.BLACK) || 
+				(isWhiteMove == false && pieceToEnpassnt.getColour() == Colour.WHITE)) {
+				pieceToEnpassnt.enpassant = false;
+				pieceToEnpassnt = null;
+			}
+		}
     }
-
-    public Collection<Move> getAllLegalMoves() {
-        return Stream.concat(this.whitePlayer.getLegalMoves().stream(), this.blackPlayer.getLegalMoves().stream()).collect(Collectors.toList());
+    
+    
+    
+    public void calculateAttackedFields(boolean isWhiteMove) {
+    	for (int col = 0; col < fieldsInColumn; ++col) {
+    		for (int row = 0; row < fieldsInRow; ++row) {
+    			if (gameBoard[col][row].getPiece() != null) {
+    				gameBoard[col][row].getPiece().addFieldAttack(this, isWhiteMove);
+    			}
+    		}
+    	}
     }
-
-    public static class Builder {
-        Map<Pair, Piece> boardConfiguration;
-        public Colour whoIsPlayingNow;
-        public Builder(){
-            this.boardConfiguration = new HashMap<>();
-
-        }
-
-        public Builder setPiece(final Piece piece){
-            boardConfiguration.put(piece.coordinate, piece);
-            return this;
-        }
-
-        public Builder setPlayer(Colour WhoIsPlayingNow){
-            this.whoIsPlayingNow = WhoIsPlayingNow;
-            return this;
-        }
-
-
-        public Board build() {
-            return new Board(this);
-        }
-//
-//        public void setEnPassantPawn(Pawn movedPawn) {
-//        }
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder printedBoard = new StringBuilder();
-        for(int i = numberOfTilesInColumn-1; i >=0 ; i--){
-            for(int j = 0; j < numberOfTilesInColumn; j++){
-                String Text = this.gameBoard.get(j).get(i).toString();
-                printedBoard.append(String.format("%3s", Text));
-            }
-            printedBoard.append('\n');
-        }
-        return printedBoard.toString();
-    }
-
-    public ArrayList<Piece> getBlackPieces(){
-        return blackPieces;
-    }
-    public ArrayList<Piece> getWhitePieces(){
-        return whitePieces;
+    
+    public int movePiece(Field from, Field to, boolean isWhiteMove) {
+    	int status = -1;
+    	status = from.movePiece(this, to, isWhiteMove);
+    	if (status == 0) {
+    		updateEnpassant(isWhiteMove);
+    		
+    	}
+    	return status;
     }
 }
-

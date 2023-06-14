@@ -1,74 +1,134 @@
 package Chess.engine.pieces;
 
 import Chess.engine.Colour;
-import Chess.engine.Pair;
+import Chess.engine.PieceType;
 import Chess.engine.board.Board;
-import Chess.engine.board.BoardFeature;
-import Chess.engine.moves.Move;
+import Chess.engine.board.Field;
+import java.lang.Math;
 
-import java.util.ArrayList;
-import java.util.List;
+
+
 
 public class Pawn extends Piece{
-
-    public Pawn( int positionX, int positionY, Colour colour) {
-        super(typeOfPiece.PAWN, positionX, positionY, colour);
+	public boolean enpassant = false;
+	
+    public Pawn(Colour colour, Field sourceField, boolean firstMove) {
+        super(colour, PieceType.PAWN, sourceField, firstMove);
     }
 
-    private static Pair[] candidateForMoves = {new Pair(0, 1), new Pair(0, 2), new Pair(1, 1), new Pair(-1, 1)};
-
-    @Override
-    public Piece moveActualPiece(Move move) {
-        return new Pawn(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
+    public boolean isPromoted(Field destinationField) {
+    	boolean promotion = false;
+    	Piece piece = destinationField.getPiece();
+    	
+    	if ((piece.colour == Colour.WHITE && destinationField.row == 7) ||
+    	    (piece.colour == Colour.BLACK && destinationField.row == 0)) {
+    		promotion = true;
+    	}
+        return promotion;
     }
-    @Override
-    public List<Move> AvailableMoves(Board board) {
-        final List<Move> availableMoves = new ArrayList<>();
-        for(final Pair currentVectorMove: candidateForMoves){
-            Pair candidateForMove = new Pair(this.coordinate);
-            candidateForMove.addCoordinates(currentVectorMove.getX() * getColour().getDirection(), currentVectorMove.getY() * getColour().getDirection());
-            if(!BoardFeature.isValidMove(candidateForMove)){
-                continue;
+    
+	@Override
+	public void addFieldAttack(Board board, boolean isWhiteMove) {
+		if (this.sourceField.row > 0 && this.sourceField.row < 7) {
+			if (this.sourceField.column > 0 && this.sourceField.column < 7) {
+				if (this.getColour() == Colour.WHITE) {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 1].addFieldAttacker(this);
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 1].addFieldAttacker(this);
+				} else {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 1].addFieldAttacker(this);
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 1].addFieldAttacker(this);
+				}
+			}
+			if (this.sourceField.column == 0) {
+				if (this.getColour() == Colour.WHITE) {
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 1].addFieldAttacker(this);
+				} else {
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 1].addFieldAttacker(this);
+				}
+			}
+			if (this.sourceField.column == 7) {
+				if (this.getColour() == Colour.WHITE) {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 1].addFieldAttacker(this);
+				} else {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 1].addFieldAttacker(this);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void removeFieldAttack(Board board) {
+		if (this.sourceField.row > 0 && this.sourceField.row < 7) {
+			if (this.sourceField.column > 0 && this.sourceField.column < 7) {
+				if (this.getColour() == Colour.WHITE) {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 1].removeFieldAttacker(this);
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 1].removeFieldAttacker(this);
+				} else {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 1].removeFieldAttacker(this);
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 1].removeFieldAttacker(this);
+				}
+			}
+			if (this.sourceField.column == 0) {
+				if (this.getColour() == Colour.WHITE) {
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row + 1].removeFieldAttacker(this);
+				} else {
+					board.gameBoard[this.sourceField.column + 1][this.sourceField.row - 1].removeFieldAttacker(this);
+				}
+			}
+			if (this.sourceField.column == 7) {
+				if (this.getColour() == Colour.WHITE) {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row + 1].removeFieldAttacker(this);
+				} else {
+					board.gameBoard[this.sourceField.column - 1][this.sourceField.row - 1].removeFieldAttacker(this);
+				}
+			}
+		}
+	}
+	
+    
+	@Override
+	public boolean isValidMove(Board board, Field destinationField, boolean isWhiteMove) {
+    	boolean isValid = false;
+    	int tmpRow = Math.abs(destinationField.row - sourceField.row);
+    	int tmpCol = Math.abs(destinationField.column - sourceField.column);
+    	int tmpColEnPas = destinationField.column - sourceField.column ;
+    	
+    	if (((sourceField.getPiece().getColour() == Colour.WHITE && (destinationField.row - sourceField.row) == 1) || 
+    			(sourceField.getPiece().getColour() == Colour.BLACK && (destinationField.row - sourceField.row) == -1)) &&
+    			tmpCol == 0 && destinationField.isOccupied() == false) {
+    		isValid = true;
+    	} else if (firstMove == true && tmpRow == 2 && tmpCol == 0 && destinationField.isOccupied() == false) {
+    		isValid = true;
+    	} else if (((sourceField.getPiece().getColour() == Colour.WHITE && (destinationField.row - sourceField.row) == 1) || 
+    			(sourceField.getPiece().getColour() == Colour.BLACK && (destinationField.row - sourceField.row) == -1)) &&
+    			tmpCol == 1 &&  destinationField.isOccupied() == true && destinationField.isEnemy(this) == true) {
+    		isValid = true;
+    	} else if (tmpRow == 1 && tmpCol == 1 && destinationField.isOccupied() == false &&
+ 			       ((sourceField.getPiece().getColour() == Colour.WHITE && sourceField.row == 4) ||
+ 			       (sourceField.getPiece().getColour() == Colour.BLACK && sourceField.row == 3)) &&
+ 			       board.gameBoard[sourceField.column + tmpColEnPas][sourceField.row].getPiece() instanceof Pawn &&
+ 			       ((Pawn)board.gameBoard[sourceField.column + tmpColEnPas][sourceField.row].getPiece()).enpassant == true) {
+    		
+    		board.pieceToEnpassnt = null;
+    		board.gameBoard[sourceField.column + tmpColEnPas][sourceField.row].getPiece().removeFieldAttack(board);
+    		board.gameBoard[sourceField.column + tmpColEnPas][sourceField.row].setPiece(null);
+            isValid = true;
+ 	    }
+    	
+    	if (isValid == true && firstMove == true && tmpRow == 2) {
+    		enpassant = true;
+            if (board.pieceToEnpassnt != null) {
+            	board.pieceToEnpassnt.enpassant = false;
             }
-            if(currentVectorMove.equals(new Pair(0, 1)) && currentVectorMove.getX() == 0 && !board.getTile(candidateForMove).isBusy()){
-                availableMoves.add(new Move.pawnMove(board, this, candidateForMove));
-//                if(this.colour.isPawnPromotionSquare(candidateForMove)){
-//                    availableMoves.add(new Move.PawnPromotion(board, this, candidateForMove));
-//                }
-//                else{
-//                    availableMoves.add(new Move.pawnMove(board, this, candidateForMove));
-//                }
-            }
-
-
-
-
-            else if (currentVectorMove.equals(new Pair(0, 2)) && !board.getTile(candidateForMove).isBusy() && (this.isWhite() && this.coordinate.getY() == 1 ||
-                    this.isBlack() && this.coordinate.getY() == BoardFeature.numberOfTilesInColumn-2)){
-                Pair placeBeforeJump = new Pair(this.coordinate.getX(), this.coordinate.getY()+ getColour().getDirection());
-                if(!board.getTile(candidateForMove).isBusy() && !board.getTile(placeBeforeJump).isBusy()) {
-                    availableMoves.add(new Move.pawnJumpMove(board, this, candidateForMove));
-                }
-            }
-
-            else if(currentVectorMove.equals(new Pair(1, 1)) && board.getTile(candidateForMove).isBusy()){
-                Piece candidateToBeBittenByPawn = board.getTile(candidateForMove).getPiece();
-                if(this.colour != candidateToBeBittenByPawn.colour){
-                    availableMoves.add(new Move.pawnAttackMove(board, this, candidateForMove, candidateToBeBittenByPawn));
-                }
-            }
-
-            else if(currentVectorMove.equals(new Pair(-1, 1)) && board.getTile(candidateForMove).isBusy()){
-                Piece candidateToBeBittenByPawn = board.getTile(candidateForMove).getPiece();
-                if(this.colour != candidateToBeBittenByPawn.colour){
-                    availableMoves.add(new Move.pawnAttackMove(board, this, candidateForMove, candidateToBeBittenByPawn));
-                }
-            }
-        }
-        return availableMoves;
-    }
-    @Override
+    		board.pieceToEnpassnt = this;
+    	}
+    	
+		return isValid;
+	}
+    
+	@Override
     public String toString() {
-        return typeOfPiece.PAWN.toString();
+        return "P";
     }
+
 }

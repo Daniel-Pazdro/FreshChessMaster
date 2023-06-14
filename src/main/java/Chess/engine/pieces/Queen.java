@@ -1,63 +1,316 @@
 package Chess.engine.pieces;
 
 import Chess.engine.Colour;
-import Chess.engine.Pair;
+import Chess.engine.PieceType;
 import Chess.engine.board.Board;
-import Chess.engine.board.BoardFeature;
-import Chess.engine.board.Tile;
-import Chess.engine.moves.Move;
+import Chess.engine.board.Field;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Queen extends Piece{
-
-    public Queen( int positionX, int positionY, Colour colour) {
-        super(typeOfPiece.QUEEN, positionX, positionY, colour);
-
-    }
-    private static Pair[] candidateForMoves = {new Pair(1, 0), new Pair(0, 1), new Pair(-1, 0), new Pair(0, -1), new Pair(1, 1), new Pair(1, -1), new Pair(-1, -1), new Pair(-1, 1)};
-
-    @Override
-    public Piece moveActualPiece(Move move) {
-        return new Queen(move.getMoveCoordinates().getX(), move.getMoveCoordinates().getY(), move.getPieceToMove().getColour());
-    }
-    @Override
-    public List<Move> AvailableMoves(Board board) {
-
-        final List<Move> availableMoves = new ArrayList<>();
-        Pair candidateForMove = new Pair(this.coordinate);
-
-
-        for (Pair currentVectorMove : candidateForMoves) {
-            candidateForMove.setX(coordinate.getX());
-            candidateForMove.setY(coordinate.getY());
-            while (BoardFeature.isValidMove(candidateForMove)) {
-                candidateForMove.addCoordinates(currentVectorMove);
-                if(BoardFeature.isValidMove(candidateForMove)) {
-
-                    Tile examinedTile = board.getTile(candidateForMove);
-                    if (!examinedTile.isBusy()) {
-                        availableMoves.add(new Move.standardMove(board, this, candidateForMove));
-                    }
-                    else {
-                        final Piece pieceAtDestination = examinedTile.getPiece();
-                        final Colour pieceAtDestinationColour = pieceAtDestination.getColour();
-                        if (this.colour != pieceAtDestinationColour) {
-                            availableMoves.add(new Move.MajorAttackMove(board, this, candidateForMove, pieceAtDestination));
-                        }
-                        break;
-                    }
-
-                }
-            }
-        }
-        return availableMoves;
+public class Queen extends Piece {
+    public Queen(Colour colour, Field sourceField, boolean firstMove) {
+        super(colour, PieceType.QUEEN, sourceField, firstMove);
     }
 
-    @Override
+    private boolean isObstacle(Board board, Field destinationField) {
+    	boolean isObstacle = false;
+    	int myRow = this.sourceField.row;
+    	int myCol = this.sourceField.column;
+    	int destRow = destinationField.row;
+    	int destCol = destinationField.column;
+    	int curRow = myRow;
+    	int curCol = myCol;
+    	
+    	while (curCol != destCol && curRow != destRow) {
+    		if (myRow < destRow) {
+    			curRow++;
+    		} else {
+    			curRow--;
+    		}
+    		if (myCol < destCol) {
+    			curCol++;
+    		} else {
+    			curCol--;
+    		}
+    		if (curCol != destCol && curRow != destRow && board.gameBoard[curCol][curRow].getPiece() != null)
+    		{
+    			isObstacle = true;
+    			break;
+    		}
+    	}
+    	
+    	while (curCol != destCol || curRow != destRow) {
+    		if (destCol == myCol && myRow < destRow) {
+    			curRow++;
+    		} else if (destCol == myCol) {
+    			curRow--;
+    		}
+    		if (myRow == destRow && myCol < destCol) {
+    			curCol++;
+    		} else if (myRow == destRow) {
+    			curCol--;
+    		}
+    		if ((curCol != destCol || curRow != destRow) && board.gameBoard[curCol][curRow].getPiece() != null)
+    		{
+    			isObstacle = true;
+    			break;
+    		}
+    	}
+    	
+    	return isObstacle;
+    }
+    
+	@Override
+	public void addFieldAttack(Board board, boolean isWhiteMove) {
+		int curRow = this.sourceField.row;
+		int curCol = this.sourceField.column;
+		boolean behindObstacle = false;
+		while (curCol < 7 && curRow < 7) {
+			curRow++;
+			curCol++;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+			
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curCol < 7 && curRow > 0) {
+			curRow--;
+			curCol++;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curCol > 0 && curRow > 0) {
+			curRow--;
+			curCol--;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curCol > 0 && curRow < 7) {
+			curRow++;
+			curCol--;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curCol < 7) {
+			curCol++;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curCol > 0) {
+			curCol--;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curRow < 7) {
+			curRow++;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		behindObstacle = false;
+		while (curRow > 0) {
+			curRow--;
+			if(behindObstacle == false) {
+				board.gameBoard[curCol][curRow].addFieldAttacker(this);
+				
+			} else {
+				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			}
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				behindObstacle = true;
+			}
+
+		}
+	}
+	
+	@Override
+	public void removeFieldAttack(Board board) {
+		int curRow = this.sourceField.row;
+		int curCol = this.sourceField.column;
+		
+		while (curCol < 7 && curRow < 7) {
+			curRow++;
+			curCol++;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curCol < 7 && curRow > 0) {
+			curRow--;
+			curCol++;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curCol > 0 && curRow > 0) {
+			curRow--;
+			curCol--;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curCol > 0 && curRow < 7) {
+			curRow++;
+			curCol--;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curCol < 7) {
+			curCol++;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curCol > 0) {
+			curCol--;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curRow < 7) {
+			curRow++;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+		
+		curRow = this.sourceField.row;
+		curCol = this.sourceField.column;
+		while (curRow > 0) {
+			curRow--;
+			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
+			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+				break;
+			}
+		}
+	}
+    
+	@Override
+	public boolean isValidMove(Board board, Field destinationField, boolean isWhiteMove) {
+		boolean isValid = false;
+    	int tmpRow = Math.abs(destinationField.row - sourceField.row);
+    	int tmpCol = Math.abs(destinationField.column - sourceField.column);
+    	
+    	if ((tmpRow == tmpCol || (tmpRow != 0 && tmpCol == 0) || (tmpRow == 0 && tmpCol != 0)) && 
+    		destinationField.isOccupied() == false && isObstacle(board, destinationField) == false) {
+    		isValid = true;
+    	} else if ((tmpRow == tmpCol || (tmpRow != 0 && tmpCol == 0) || (tmpRow == 0 && tmpCol != 0)) &&
+    			destinationField.isOccupied() == true &&  isObstacle(board, destinationField) == false &&
+    			destinationField.getPiece().getColour() != this.getColour()) {
+    		isValid = true;
+    	}
+
+		return isValid;
+	}
+
+	@Override
     public String toString() {
-        return typeOfPiece.QUEEN.toString();
+        return "Q";
     }
-
 }
