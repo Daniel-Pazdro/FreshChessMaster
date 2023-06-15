@@ -45,15 +45,28 @@ public abstract class Piece {
     
     
     public boolean canPieceShieldKing(Board board, Piece king, int row, int col) {
-    	for (Piece p : board.gameBoard[col][row].getFieldsAttackers()) {
-			if(p instanceof King == false) {
+    	for (Piece p : board.gameBoard[col][row].getFieldsAttackers()) {//can this piece be defender?
+			if(p instanceof King == false) { 
 				if(p.getColour() == king.getColour()) {
-					for (Piece pp : p.sourceField.getFieldsAttackers()) {
-
-						
-						if(pp.getColour() != p.getColour()) {
+					for (Piece pp : p.sourceField.getFieldsAttackers()) {//is defender attacked by piece
+						if(pp.getColour() != p.getColour()) { 
 							if(pp instanceof King == false) {
-								return false;
+								if (pp instanceof Rook) {
+									if (king.getSourceField().row == pp.getSourceField().row || king.getSourceField().column == pp.getSourceField().column) {
+											return false;
+									}
+								} else if (pp instanceof Bishop) {
+									if (Math.abs(king.getSourceField().row - pp.getSourceField().column) == Math.abs(king.getSourceField().column - pp.getSourceField().row)) {
+											return false;
+									}
+								} else if (pp instanceof Queen) {
+									if ((Math.abs(king.getSourceField().row - pp.getSourceField().column) == Math.abs(king.getSourceField().column - pp.getSourceField().row)) ||
+										(king.getSourceField().row == pp.getSourceField().row || king.getSourceField().column == pp.getSourceField().column)) {
+											return false;
+									}
+								}
+								
+								return true;
 							}
 						}
 					}
@@ -321,9 +334,7 @@ public abstract class Piece {
     }
     
     public boolean isPat(Board board, Piece king, boolean isWhiteMove) {
-    	boolean isPat = false; // when implement change this to true and prove it is false... remove comment
-    	
-
+    	boolean isPat = false;
     	
 		return isPat;
 	}
