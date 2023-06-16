@@ -32,16 +32,25 @@ public class Table {
 	private Color lightTileColour =  Color.decode("#D5DBDB");
 	private Color darkTileColour =  Color.decode("#138D75");
 
+	void closeWindow() {
+		System.exit(0);
+	}
+	
+	void startNewGame( ) {
+		this.isWhiteMove = true;
+		board = new Board();
+		boardPanel.drawBoard(board);
+	}
+	
 
-    public Table(Board board, boolean whiteMove) {
-    	this.isWhiteMove = whiteMove;
+    public Table() {
 		this.gameFrame = new JFrame("FreshChessMaster");
 	    gameFrame.setSize(sizeOfFrame);
 	    gameFrame.setLayout(new BorderLayout());
 	    final JMenuBar tableMenuBar = createTableMenuBar();
 	    this.gameFrame.setJMenuBar(tableMenuBar);
 	    this.gameFrame.setSize(sizeOfFrame);
-	    this.board = board;
+	    this.board = new Board();
 	    boardPanel = new BoardPanel();
 	    gameFrame.add(this.boardPanel, BorderLayout.CENTER);
 	    this.gameFrame.setVisible(true);
@@ -54,24 +63,24 @@ public class Table {
     }
 
     private JMenu createFileMenu() {
-        final JMenu fileMenu = new JMenu("File");
-        final JMenuItem openPGN = new JMenuItem("Load PGN File");
-        openPGN.addActionListener(new ActionListener() {
+        final JMenu gameMenu = new JMenu("Game");
+        final JMenuItem  startNewGameButtom = new JMenuItem("Start New Game");
+        startNewGameButtom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("open file");
+            	startNewGame();
             }
         });
-        fileMenu.add(openPGN);
+        gameMenu.add(startNewGameButtom);
         final JMenuItem  exitMenuButtom = new JMenuItem("Exit");
         exitMenuButtom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+            	closeWindow();
             }
         });
-        fileMenu.add(exitMenuButtom);
-        return fileMenu;
+        gameMenu.add(exitMenuButtom);
+        return gameMenu;
     }
 
     private class BoardPanel extends JPanel {
@@ -108,6 +117,40 @@ public class Table {
         private final int row;
         private final int column;
         
+        private void processGameStatus(int status)
+        {
+        	if (status == 0) {
+    			pieceSelected = false;
+    			isWhiteMove = !isWhiteMove;
+    			System.out.print("Good Move");
+    		} else if (status == -1) {
+    			pieceSelected = false;
+    			System.out.print("Illegal move");
+    		} else if (status > 0) {
+    			String result = "";
+    			if (status == 1) {
+    				result = " Draw!!!";
+    			} else if (status == 2) {
+    				result = " White won!!!";
+    			} else if (status == 3) {
+    				result = " Black won!!!";
+    			}
+    			pieceSelected = false;
+    			System.out.println("Start new game");
+    			boardPanel.drawBoard(board);
+    			JOptionPane.showMessageDialog(gameFrame, "Game over." + result);
+    			int dialogButton = JOptionPane.YES_NO_OPTION;
+    			int dialogResult = JOptionPane.showConfirmDialog (null, "Start new  game?","Warning",dialogButton);
+    			if(dialogResult == JOptionPane.YES_OPTION) {
+    				startNewGame();
+    			} else {
+    				closeWindow();
+    			}
+    			
+    		}
+        }
+        
+        
         TilePanel(final BoardPanel boardPanel, final int column, final int row) {
             super(new GridBagLayout());
             this.row = row;
@@ -117,6 +160,10 @@ public class Table {
             assignTIlePieceIcon(board);
             
             JPanel myPanel = this;
+
+            
+            
+            
             
             addMouseListener(new MouseListener() {
                 @Override public void mouseClicked(MouseEvent e) {
@@ -147,17 +194,7 @@ public class Table {
                     	} else if (pieceSelected == true) {
                     		destinationTile = clickedTile;
                     		int status = board.movePiece(sourceTile, destinationTile, isWhiteMove);
-                    		if (status == 0) {
-                    			pieceSelected = false;
-                    			isWhiteMove = !isWhiteMove;
-                    			System.out.print("Good Move");
-                    		} else if (status == -1) {
-                    			pieceSelected = false;
-                    			System.out.print("Illegal move");
-                    		} else if (status == 1) {
-                    			pieceSelected = false;
-                    			System.out.println("Start new game");
-                    		}
+                    		processGameStatus(status);
                     			
                     	}
                     }

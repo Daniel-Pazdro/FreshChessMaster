@@ -332,10 +332,9 @@ public abstract class Piece {
     	
     	return isMate;
     }
-    
+
     public boolean isPat(Board board, Piece king, boolean isWhiteMove) {
     	boolean isPat = false;
-    	
 		return isPat;
 	}
 
@@ -359,10 +358,8 @@ public abstract class Piece {
     		
     		destinationField.setPiece(sourceField.getPiece());
     		
-    		
 
     		if(destinationField.getPiece() instanceof Pawn && ((Pawn)destinationField.getPiece()).isPromoted(destinationField)) {
-
     			Piece p = new Queen(sourceField.getPiece().getColour(), destinationField, false);
     			destinationField.setPiece(p);
     		}
@@ -454,12 +451,12 @@ public abstract class Piece {
     		if (isWhiteMove == true) {
 				if (((King)board.getBlackKing()).getChecked() && true == isMate(board, board.getBlackKing(), isWhiteMove)) {
 					System.out.println("White won!!! Congratulations!!!");
-					status = 1;
+					status = 2;
 				}
 			} else {
 				if (((King)board.getWhiteKing()).getChecked() && true == isMate(board, board.getWhiteKing(), isWhiteMove)) {
 					System.out.println("Black won!!! Congratulations!!!");
-					status = 1;
+					status = 3;
 				}
 			}
     		

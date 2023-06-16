@@ -55,7 +55,7 @@ public class Board {
     		gameBoard[i][1].setPiece(new Pawn(Colour.WHITE, gameBoard[i][1], true));
     		gameBoard[i][6].setPiece(new Pawn(Colour.BLACK, gameBoard[i][6], true));
     	}
-    	
+
     	calculateAttackedFields(true);
     }
     
