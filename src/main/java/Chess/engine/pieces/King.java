@@ -163,6 +163,12 @@ public class King extends Piece{
  	    }
     	
     	if (isValid == true && firstMove == true && tmpCol == 2) {
+    		int checkLongSwap = sourceField.column - destinationField.column - 2;
+    		if(checkLongSwap == 0) {
+    			if(board.gameBoard[1][destinationField.row].getPiece() != null){
+    				return false;
+    			}
+    		}
     		swapRook(board, destinationField, isWhiteMove);
     	}
     	

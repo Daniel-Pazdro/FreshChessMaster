@@ -77,10 +77,6 @@ public abstract class Piece {
 		}
     	return false;
     }
-    public boolean isDiagonalProtector(Board board, Piece king, int row, int col) {
-    	
-    	return false;
-    }
     
     public boolean isMate(Board board, Piece king, boolean isWhiteMove) {
     	isWhiteMove = !isWhiteMove; //we want check can oppsit king can run away so we calculate as black king move
@@ -166,8 +162,8 @@ public abstract class Piece {
     					}
     					if (p.getSourceField().row == king.getSourceField().row) {
     						int tmpCol = king.getSourceField().column;
-    						while (tmpCol != p.getSourceField().row) {
-	    						if (king.sourceField.row < p.sourceField.row) {
+    						while (tmpCol != p.getSourceField().column) {
+	    						if (king.sourceField.column < p.sourceField.column) {
 	    							tmpCol++;
 	    						} else {
 	    							tmpCol--;
@@ -256,8 +252,8 @@ public abstract class Piece {
     					}
     					if (p.getSourceField().row == king.getSourceField().row) {
     						int tmpCol = king.getSourceField().column;
-    						while (tmpCol != p.getSourceField().row) {
-	    						if (king.sourceField.row < p.sourceField.row) {
+    						while (tmpCol != p.getSourceField().column) {
+	    						if (king.sourceField.column < p.sourceField.column) {
 	    							tmpCol++;
 	    						} else {
 	    							tmpCol--;
@@ -332,9 +328,62 @@ public abstract class Piece {
     	
     	return isMate;
     }
-
+    
     public boolean isPat(Board board, Piece king, boolean isWhiteMove) {
-    	boolean isPat = false;
+    	boolean isPat = true; 
+    	
+    	isWhiteMove = !isWhiteMove;
+    	for (int col = 0; col < board.fieldsInColumn; ++col) {
+    		for (int row = 0; row < board.fieldsInColumn; ++row) {
+        		for (Piece p : board.gameBoard[col][row].getFieldsAttackers())
+        		{
+        			if(p instanceof King ==true && isWhiteMove == false && p.getColour() == Colour.BLACK) {
+        				if (king.isValidMove(board, board.gameBoard[col][row], isWhiteMove) == true) {
+        					isPat = false;
+        				}
+        				continue;
+        			}
+        			
+        			if(p instanceof King == true && isWhiteMove == true && p.getColour() == Colour.WHITE) {
+        				if (king.isValidMove(board, board.gameBoard[col][row], isWhiteMove) == true) {
+        					isPat = false;
+        				}
+        				continue;
+        			}
+        			
+        			if(isWhiteMove == false && p.getColour() == Colour.BLACK && p instanceof Pawn == false) {
+        				if(board.gameBoard[col][row].isOccupied() == false) {
+            				return false;
+            			}
+        				if(board.gameBoard[col][row].isOccupied() == true && 
+        				   board.gameBoard[col][row].getPiece().getColour() == Colour.WHITE) {
+            				return false;
+            			}
+        			} else if(isWhiteMove == true && p.getColour() == Colour.WHITE && p instanceof Pawn == false) {
+        				if(board.gameBoard[col][row].isOccupied() == false) {
+            				return false;
+            			}
+        				if(board.gameBoard[col][row].isOccupied() == true && 
+             			   board.gameBoard[col][row].getPiece().getColour() == Colour.BLACK) {
+                 			return false;
+                 		}
+        			}
+        			if(isWhiteMove == false && p.getColour() == Colour.BLACK && p instanceof Pawn == true) {
+        				if (p.isValidMove(board, board.gameBoard[p.getSourceField().column][p.getSourceField().row - 1], isWhiteMove) == true) {
+        					return false;
+        				}
+        			}
+        			if(isWhiteMove == true && p.getColour() == Colour.WHITE && p instanceof Pawn == true) {
+        				if (p.isValidMove(board, board.gameBoard[p.getSourceField().column][p.getSourceField().row + 1], isWhiteMove) == true) {
+        					return false;
+        				}
+        			}
+        			
+        		}
+        	}
+    	}
+    	
+    	
 		return isPat;
 	}
 
@@ -357,6 +406,7 @@ public abstract class Piece {
     		Piece tmpPiece = destinationField.getPiece();
     		
     		destinationField.setPiece(sourceField.getPiece());
+    		
     		
 
     		if(destinationField.getPiece() instanceof Pawn && ((Pawn)destinationField.getPiece()).isPromoted(destinationField)) {
@@ -466,7 +516,7 @@ public abstract class Piece {
 					status = 1;
 				}
 			} else {
-				if (((King)board.getWhiteKing()).getChecked() ==false && true == isPat(board, board.getWhiteKing(), isWhiteMove)) {
+				if (((King)board.getWhiteKing()).getChecked() == false && true == isPat(board, board.getWhiteKing(), isWhiteMove)) {
 					System.out.println("We have got Pat!");
 					status = 1;
 				}

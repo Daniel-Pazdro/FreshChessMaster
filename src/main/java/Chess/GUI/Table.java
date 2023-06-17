@@ -140,7 +140,7 @@ public class Table {
     			boardPanel.drawBoard(board);
     			JOptionPane.showMessageDialog(gameFrame, "Game over." + result);
     			int dialogButton = JOptionPane.YES_NO_OPTION;
-    			int dialogResult = JOptionPane.showConfirmDialog (null, "Start new  game?","Warning",dialogButton);
+    			int dialogResult = JOptionPane.showConfirmDialog (null, "Start new  game?","Warning", dialogButton);
     			if(dialogResult == JOptionPane.YES_OPTION) {
     				startNewGame();
     			} else {
@@ -160,10 +160,6 @@ public class Table {
             assignTIlePieceIcon(board);
             
             JPanel myPanel = this;
-
-            
-            
-            
             
             addMouseListener(new MouseListener() {
                 @Override public void mouseClicked(MouseEvent e) {
@@ -188,7 +184,7 @@ public class Table {
                 			   (isWhiteMove == false && clickedTile.getPiece().getColour() == Colour.BLACK)) {
                 				sourceTile = clickedTile;
                 				pieceSelected = true;
-                				System.out.print("You move " + clickedTile.getPiece().toString());
+                				System.out.println("You move " + clickedTile.getPiece().toString());
                 			}
                 			
                     	} else if (pieceSelected == true) {

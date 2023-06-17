@@ -68,15 +68,13 @@ public class Queen extends Piece {
 			curCol++;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
-			
 		}
 		
 		curRow = this.sourceField.row;
@@ -87,14 +85,13 @@ public class Queen extends Piece {
 			curCol++;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
 		}
 		
 		curRow = this.sourceField.row;
@@ -105,16 +102,15 @@ public class Queen extends Piece {
 			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
 		}
-		
+
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
 		behindObstacle = false;
@@ -123,15 +119,16 @@ public class Queen extends Piece {
 			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 
 		}
+		
 		
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
@@ -140,15 +137,13 @@ public class Queen extends Piece {
 			curCol++;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
-
 		}
 		
 		curRow = this.sourceField.row;
@@ -158,14 +153,13 @@ public class Queen extends Piece {
 			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
 		}
 		
 		curRow = this.sourceField.row;
@@ -175,14 +169,13 @@ public class Queen extends Piece {
 			curRow++;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
 		}
 		
 		curRow = this.sourceField.row;
@@ -192,14 +185,13 @@ public class Queen extends Piece {
 			curRow--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
-
 		}
 	}
 	
@@ -212,7 +204,8 @@ public class Queen extends Piece {
 			curRow++;
 			curCol++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -223,7 +216,8 @@ public class Queen extends Piece {
 			curRow--;
 			curCol++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -234,7 +228,8 @@ public class Queen extends Piece {
 			curRow--;
 			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -245,7 +240,8 @@ public class Queen extends Piece {
 			curRow++;
 			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -255,7 +251,8 @@ public class Queen extends Piece {
 		while (curCol < 7) {
 			curCol++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -265,7 +262,8 @@ public class Queen extends Piece {
 		while (curCol > 0) {
 			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -275,7 +273,8 @@ public class Queen extends Piece {
 		while (curRow < 7) {
 			curRow++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -285,7 +284,8 @@ public class Queen extends Piece {
 		while (curRow > 0) {
 			curRow--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}

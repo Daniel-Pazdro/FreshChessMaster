@@ -54,7 +54,8 @@ public class Bishop extends Piece{
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
@@ -67,11 +68,11 @@ public class Bishop extends Piece{
 			curCol++;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
@@ -84,15 +85,15 @@ public class Bishop extends Piece{
 			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
-		
+
 		curRow = this.sourceField.row;
 		curCol = this.sourceField.column;
 		behindObstacle = false;
@@ -101,11 +102,11 @@ public class Bishop extends Piece{
 			curCol--;
 			if(behindObstacle == false) {
 				board.gameBoard[curCol][curRow].addFieldAttacker(this);
-				
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
@@ -120,7 +121,8 @@ public class Bishop extends Piece{
 			curRow++;
 			curCol++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -131,7 +133,8 @@ public class Bishop extends Piece{
 			curRow--;
 			curCol++;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -142,7 +145,8 @@ public class Bishop extends Piece{
 			curRow--;
 			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}
@@ -153,7 +157,8 @@ public class Bishop extends Piece{
 			curRow++;
 			curCol--;
 			board.gameBoard[curCol][curRow].removeFieldAttacker(this);
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null  && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				break;
 			}
 		}

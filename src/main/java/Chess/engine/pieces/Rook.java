@@ -52,7 +52,8 @@ public class Rook extends Piece{
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
@@ -67,7 +68,8 @@ public class Rook extends Piece{
 			} else {
 				board.gameBoard[curCol][curRow].removeFieldAttacker(this);
 			}
-			if (board.gameBoard[curCol][curRow].getPiece() != null) {
+			if (board.gameBoard[curCol][curRow].getPiece() != null && 
+					(board.gameBoard[curCol][curRow].getPiece() instanceof King) == false) {
 				behindObstacle = true;
 			}
 		}
