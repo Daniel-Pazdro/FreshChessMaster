@@ -29,7 +29,7 @@ public abstract class Piece {
     	return this.sourceField;
     	
     }
-	//
+
     
     public Colour getColour() {
     	return colour;
